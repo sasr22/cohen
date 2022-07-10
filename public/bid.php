@@ -160,7 +160,7 @@ $row = $smt->fetch();
                     let start = true;
 
                     span.innerHTML = 'For "' + key + '" the calculation is: ';
-                    span2.innerHTML = 'For "' + key + '" the calculation is: ';
+                    span2.innerHTML = 'For "' + key + '" the calculation is: (';
 
                     let price = 0;
 
@@ -171,7 +171,7 @@ $row = $smt->fetch();
                         const span4 = document.createElement('span');
 
                         if (start === true) {
-                            text += '(( ';
+                            text += '( ';
                             start = false;
                         } else {
                             text += ' + ( ';
