@@ -168,6 +168,7 @@ $row = $smt->fetch();
                         let text = '';
 
                         const span3 = document.createElement('span');
+                        const span4 = document.createElement('span');
 
                         if (start === true) {
                             text += '(( ';
@@ -177,6 +178,7 @@ $row = $smt->fetch();
                         }
 
                         span3.title = json[key2].Name;
+                        span4.title = json[key2].Name;
 
                         text += value2 + ' * ' + json[key2].Cost + ' * ' + (100 + <?php echo $row['tax'] ?>) + '% )';
 
@@ -184,10 +186,11 @@ $row = $smt->fetch();
 
                         price += value2 * price_per_one;
 
-                        span3.innerText = text;
+                        span3.innerHTML = text;
+                        span4.innerHTML = text;
 
                         span.appendChild(span3);
-                        span2.appendChild(span3);
+                        span2.appendChild(span4);
                     }
 
                     value.cost = price;
