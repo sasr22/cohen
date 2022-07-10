@@ -251,7 +251,7 @@ $row = $smt->fetch();
                     price_total_element.appendChild(span);
                 }
 
-                price_total_element.innerHTML += ' = $' + total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+                price_total_element.innerHTML += ' = $' + total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
                 const sections_element = document.getElementById('sections');
 
@@ -284,7 +284,19 @@ $row = $smt->fetch();
                     }
 
                     sections_element.appendChild(ol);
+
+                    sections_element.innerHTML += 'Total buying price: $' + value.total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                 }
+
+                const price_to_buy_element = document.getElementById('price_to_buy');
+                
+                let finel_price = 0;
+
+                for (const [key, value] of Object.entries(items)) {
+                    finel_price += value.total_price
+                }
+
+                price_to_buy_element.innerHTML = 'Total buying price: $' + finel_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
             });
         }
 
