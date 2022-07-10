@@ -1,0 +1,9 @@
+FROM php:8-fpm-alpine
+
+RUN apk --no-cache add postgresql-dev
+
+RUN docker-php-ext-install pdo pdo_pgsql
+
+COPY ./public/index.php /usr/src/app/
+COPY ./public/bid.php /usr/src/app/
+WORKDIR /usr/src/app

@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  db:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-db
+    restart: unless-stopped
+    env_file:
+      - .env
+    expose:
+      - 5432
+
+  php-fpm:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-php
+    restart: unless-stopped
+    expose:
+      - 9000
+    env_file:
+      - .env
+
+  caddy:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile-caddy
+    restart: unless-stopped
+    ports:
+      - 80:80
+      - 443:443
+    env_file:
+      - .env
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
