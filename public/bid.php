@@ -61,6 +61,20 @@ $row = $smt->fetch();
                     return ret;
                 }
 
+                function get_time(ingredients) {
+                    let ret = 0;
+
+                    for (const [key, ingredient] of Object.entries(ingredients)) {
+                        if (json[key].Category === 'Ammunition' || json[key].Category === 'Mixed Materials' || json[key].Category === 'Weapon Components') {
+                            const time = get_time(json[key].Ingredients);
+
+                            ret += time + json[key].BaseCraftTime;
+                        }
+                    }
+
+                    return ret;
+                }
+
 
                 let items = {};
                 let ingredients = {};
@@ -70,6 +84,7 @@ $row = $smt->fetch();
                 for (const key of Object.keys(bid)) {
                     items[json[key].Name] = {
                         ingredients: get_ingredients(json[key].Ingredients),
+                        time: get_time(json[key].Ingredients) + json[key].BaseCraftTime,
                         total: bid[key]
                     };
                 }
@@ -226,7 +241,7 @@ $row = $smt->fetch();
                         const span2 = document.createElement('span');
 
                         if (start === true) {
-                            text += '((( ';
+                            text += '(( ';
                             start = false;
                         } else {
                             text += ' + ( ';
@@ -246,7 +261,7 @@ $row = $smt->fetch();
                     }
 
                     if (key === last) {
-                        span.innerHTML += ' * ' + value.total + ')';
+                        span.innerHTML += ' * ' + value.total;
                     } else {
                         span.innerHTML += ' * ' + value.total + ') + ';
                     }
@@ -288,18 +303,58 @@ $row = $smt->fetch();
 
                     sections_element.appendChild(ol);
 
-                    sections_element.innerHTML += 'Total buying price: $' + value.total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                    sections_element.innerHTML += 'Total buying price without crafting price: $' + value.total_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
                 }
 
                 const price_to_buy_element = document.getElementById('price_to_buy');
-                
+
                 let finel_price = 0;
 
                 for (const [key, value] of Object.entries(items)) {
                     finel_price += value.total_price
                 }
 
-                price_to_buy_element.innerHTML = 'Total buying price: $' + finel_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                price_to_buy_element.innerHTML = 'Total buying price without crafting price: $' + finel_price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+                const time_to_craft_element = document.getElementById('time_to_craft');
+
+                let total_time = 0;
+
+                for (const [key, value] of Object.entries(items)) {
+                    const li = document.createElement('li');
+
+                    const date = new Date(0);
+                    date.setSeconds(value.time);
+                    const raw = date.toISOString().substr(11, 8);
+                    date.setSeconds(value.time * value.total);
+                    const total = date.toISOString().substr(11, 8);
+
+                    total_time += value.time * value.total;
+
+                    li.innerHTML = 'Crafting time for "' + key + '": Per item => ' + raw + ', Total => ' + total;
+
+                    time_to_craft_element.append(li);
+                }
+
+                const total_time_element = document.getElementById('total_time');
+
+                const date = new Date(0);
+                date.setSeconds(total_time);
+                const total = date.toISOString().substr(11, 8);
+
+                total_time_element.innerHTML = 'Total crafting time: ' + total;
+
+                const div = document.createElement('div');
+                const div2 = document.createElement('div');
+
+                const price_time = (10000 * parseInt((total_time * 100) / 3600)) / 100;
+
+                div.innerHTML = 'Crafting price: $' + price_time.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+                div2.innerHTML = 'Total crafting price with time: $' + (price_time + finel_price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+                total_time_element.appendChild(div);
+                total_time_element.appendChild(div2);
             });
         }
 
@@ -347,8 +402,17 @@ $row = $smt->fetch();
         <ol id="sections">
         </ol>
     </div>
+    <div>
+        <ol id="time_to_craft">
+        </ol>
+    </div>
     <div id="price_to_buy">
     </div>
+    <p>
+        Price per hour of crafting is $10,000
+    <div id="total_time">
+    </div>
+    </p>
 </body>
 
 </html>
