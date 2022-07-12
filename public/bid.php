@@ -368,7 +368,6 @@ $row = $smt->fetch();
     <a href="/">Go back</a><br /><br />
     Basket: <?php echo $row['basket'] ?><br />
     Created at: <?php echo $row['created_at'] ?><br />
-    <?php echo $row['buyer_phone'] !== null ? 'Buyer phone: ' . $row['buyer_phone'] . '<br />' : '' ?>
     <?php echo $row['sold_at'] !== null ? 'Sold at: ' . $row['sold_at'] : 'Not sold yet' ?><br /><br />
     <div>
         Items to craft:
